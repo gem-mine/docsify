@@ -22,14 +22,16 @@ function style() {
 
 .search-results-panel {
   display: none;
-  position: fixed;
-  left: var(--sidebar-width);
-  top: 84px;
-  max-height: calc(100% - 100px);
+  position: absolute;
+  height: calc(100vh - 100px);
   overflow-y: auto;
+  width: calc(100% - 90px);
   background: #fff;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   z-index: 9999999;
+}
+
+.search-results-panel.show ~ * {
+  display: none;
 }
 
 .search-results-panel h2, .search-results-panel p {
@@ -42,7 +44,9 @@ function style() {
 }
 
 .search-results-panel .empty {
-  padding: 8px 25px;
+  padding: 50px 25px;
+  text-align: center;
+  font-size: 24px;
   color: var(--notice-important-border-color, var(--notice-border-color));
 }
 
@@ -133,10 +137,6 @@ function style() {
   -webkit-box-orient: vertical;
 }
 
-.search p.empty {
-  text-align: center;
-}
-
 .app-name.hide, .sidebar-nav.hide {
   display: none;
 }`
@@ -162,18 +162,25 @@ function tpl(defaultValue = '') {
 
   Docsify.dom.toggleClass(el, 'search')
   Docsify.dom.before(aside, el)
+}
 
-  const seachEl = Docsify.dom.create('div', html)
-  const main = Docsify.dom.find('main')
+function createSearchPanel() {
+  const main = Docsify.dom.find('article#main')
+  let searchPanel = Docsify.dom.find(main, '.search-results-panel')
 
-  Docsify.dom.toggleClass(seachEl, 'search-results-panel')
-  Docsify.dom.before(main, seachEl)
+  if (searchPanel) {
+    return searchPanel
+  }
+
+  searchPanel = Docsify.dom.create('div')
+  Docsify.dom.toggleClass(searchPanel, 'search-results-panel')
+  Docsify.dom.before(main, searchPanel)
+  return searchPanel
 }
 
 function doSearch(value) {
   const $search = Docsify.dom.find('div.search')
-  const $main = Docsify.dom.find('main')
-  const $panel = Docsify.dom.find($main, '.search-results-panel')
+  const $panel = createSearchPanel()
   const $clearBtn = Docsify.dom.find($search, '.clear-button')
   const $sidebarNav = Docsify.dom.find('.sidebar-nav')
   const $appName = Docsify.dom.find('.app-name')
