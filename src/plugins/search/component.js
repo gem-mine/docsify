@@ -193,7 +193,7 @@ function doSearch(value) {
     $clearBtn.classList.remove('show')
     $panel.innerHTML = ''
     if (pageToc) {
-      pageToc.classList.add('hide')
+      pageToc.classList.remove('hide')
     }
 
     if (options.hideOtherSidebarContent) {
