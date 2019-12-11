@@ -175,6 +175,7 @@ function createSearchPanel() {
   searchPanel = Docsify.dom.create('div')
   Docsify.dom.toggleClass(searchPanel, 'search-results-panel')
   Docsify.dom.before(main, searchPanel)
+
   return searchPanel
 }
 
@@ -185,10 +186,15 @@ function doSearch(value) {
   const $sidebarNav = Docsify.dom.find('.sidebar-nav')
   const $appName = Docsify.dom.find('.app-name')
 
+  const pageToc = Docsify.dom.find('main .toc-nav')
+
   if (!value) {
     $panel.classList.remove('show')
     $clearBtn.classList.remove('show')
     $panel.innerHTML = ''
+    if (pageToc) {
+      pageToc.classList.add('hide')
+    }
 
     if (options.hideOtherSidebarContent) {
       $sidebarNav.classList.remove('hide')
@@ -213,6 +219,10 @@ function doSearch(value) {
   $panel.classList.add('show')
   $clearBtn.classList.add('show')
   $panel.innerHTML = html || `<p class="empty">${NO_DATA_TEXT}</p>`
+  if (pageToc) {
+    pageToc.classList.add('hide')
+  }
+
   if (options.hideOtherSidebarContent) {
     $sidebarNav.classList.add('hide')
     $appName.classList.add('hide')
