@@ -43,6 +43,11 @@ export class HTML5History extends History {
   parse(path = location.href) {
     let query = ''
 
+    const hashIndex = path.indexOf('#')
+    if (hashIndex >= 0) {
+      path = path.slice(0, hashIndex)
+    }
+
     const queryIndex = path.indexOf('?')
     if (queryIndex >= 0) {
       query = path.slice(queryIndex + 1)
