@@ -10,6 +10,8 @@ import {isFn, merge, cached, isPrimitive} from '../util/core'
 // See https://github.com/PrismJS/prism/pull/1367
 import 'prismjs/components/prism-markup-templating'
 
+const MarkdownClassPrefix = 'docsify-markdown-element'
+
 const cachedLinks = {}
 
 export function getAndRemoveConfig(str = '') {
@@ -42,17 +44,17 @@ const compileMedia = {
   },
   iframe(url, title) {
     return {
-      html: `<iframe src="${url}" ${title || 'width=100% height=400'}></iframe>`
+      html: `<iframe class="${MarkdownClassPrefix}" src="${url}" ${title || 'width=100% height=400'}></iframe>`
     }
   },
   video(url, title) {
     return {
-      html: `<video src="${url}" ${title || 'controls'}>Not Support</video>`
+      html: `<video class="${MarkdownClassPrefix}" src="${url}" ${title || 'controls'}>Not Support</video>`
     }
   },
   audio(url, title) {
     return {
-      html: `<audio src="${url}" ${title || 'controls'}>Not Support</audio>`
+      html: `<audio class="${MarkdownClassPrefix}" src="${url}" ${title || 'controls'}>Not Support</audio>`
     }
   },
   code(url, title) {
@@ -161,9 +163,11 @@ export class Compiler {
         } else if (/\.mp3/.test(href)) {
           type = 'audio'
         }
+
         embed = compileMedia[type].call(this, href, title)
         embed.type = type
       }
+
       embed.fragment = config.fragment
 
       return embed
@@ -214,8 +218,9 @@ export class Compiler {
       nextToc.slug = url
       _self.toc.push(nextToc)
 
-      return `<h${level} id="${slug}"><a href="${url}" data-id="${slug}" class="anchor"><span>${str}</span></a></h${level}>`
+      return `<h${level} id="${slug}" class="${MarkdownClassPrefix}"><a href="${url}" data-id="${slug}" class="anchor ${MarkdownClassPrefix}"><span class="${MarkdownClassPrefix}">${str}</span></a></h${level}>`
     }
+
     // Highlight code
     origin.code = renderer.code = function (code, lang = '') {
       code = code.replace(/@DOCSIFY_QM@/g, '`')
@@ -224,8 +229,9 @@ export class Compiler {
         Prism.languages[lang] || Prism.languages.markup
       )
 
-      return `<pre v-pre data-lang="${lang}"><code class="lang-${lang}">${hl}</code></pre>`
+      return `<pre v-pre data-lang="${lang}" class="${MarkdownClassPrefix}"><code class="lang-${lang} ${MarkdownClassPrefix}">${hl}</code></pre>`
     }
+
     origin.link = renderer.link = function (href, title = '', text) {
       let attrs = ''
 
@@ -240,6 +246,7 @@ export class Compiler {
         if (href === _self.config.homepage) {
           href = 'README'
         }
+
         href = router.toURL(href, null, router.getCurrentPath())
       } else {
         attrs += href.indexOf('mailto:') === 0 ? '' : ` target="${linkTarget}"`
@@ -258,19 +265,22 @@ export class Compiler {
         attrs += ` title="${title}"`
       }
 
-      return `<a href="${href}"${attrs}>${text}</a>`
+      return `<a class="${MarkdownClassPrefix}" href="${href}"${attrs}>${text}</a>`
     }
+
     origin.paragraph = renderer.paragraph = function (text) {
       let result
       if (/^!&gt;/.test(text)) {
-        result = helperTpl('tip', text)
+        result = helperTpl(`tip ${MarkdownClassPrefix}`, text)
       } else if (/^\?&gt;/.test(text)) {
-        result = helperTpl('warn', text)
+        result = helperTpl(`warn ${MarkdownClassPrefix}`, text)
       } else {
-        result = `<p>${text}</p>`
+        result = `<p class="${MarkdownClassPrefix}">${text}</p>`
       }
+
       return result
     }
+
     origin.image = renderer.image = function (href, title, text) {
       let url = href
       let attrs = ''
@@ -300,24 +310,61 @@ export class Compiler {
         url = getPath(contentBase, getParentPath(router.getCurrentPath()), href)
       }
 
-      return `<img src="${url}"data-origin="${href}" alt="${text}"${attrs}>`
+      return `<img class="${MarkdownClassPrefix}" src="${url}"data-origin="${href}" alt="${text}"${attrs}>`
     }
+
     origin.list = renderer.list = function (body, ordered, start) {
       const isTaskList = /<li class="task-list-item">/.test(body.split('class="task-list"')[0])
       const isStartReq = start && start > 1
       const tag = ordered ? 'ol' : 'ul'
       const tagAttrs = [
-        (isTaskList ? 'class="task-list"' : ''),
+        (isTaskList ? `class="task-list ${MarkdownClassPrefix}"` : `class="${MarkdownClassPrefix}"`),
         (isStartReq ? `start="${start}"` : '')
       ].join(' ').trim()
 
       return `<${tag} ${tagAttrs}>${body}</${tag}>`
     }
+
     origin.listitem = renderer.listitem = function (text) {
       const isTaskItem = /^(<input.*type="checkbox"[^>]*>)/.test(text)
-      const html = isTaskItem ? `<li class="task-list-item"><label>${text}</label></li>` : `<li>${text}</li>`
+      const html = isTaskItem ? `<li class="task-list-item ${MarkdownClassPrefix}"><label>${text}</label></li>` : `<li class="${MarkdownClassPrefix}">${text}</li>`
 
       return html
+    }
+
+    origin.blockquote = renderer.blockquote = function (quote) {
+      return `<blockquote class="${MarkdownClassPrefix}">${quote}</blockquote>`
+    }
+
+    origin.hr = renderer.hr = function () {
+      return this.options.xhtml ?
+        `<hr class="${MarkdownClassPrefix}"/>` :
+        `<hr class="${MarkdownClassPrefix}">`
+    }
+
+    origin.checkbox = renderer.checkbox = function (checked) {
+      return '<input ' +
+        (checked ? 'checked="" ' : '') +
+        `disabled="" type="checkbox" class="${MarkdownClassPrefix}"` +
+        (this.options.xhtml ? ' /' : '') +
+        '> '
+    }
+
+    origin.table = renderer.table = function (header, body) {
+      if (body) {
+        body = '<tbody>' + body + '</tbody>'
+      }
+
+      return `<table class="${MarkdownClassPrefix}">\n` +
+        '<thead>\n' +
+        header +
+        '</thead>\n' +
+        body +
+        '</table>\n'
+    }
+
+    origin.codespan = renderer.codespan = function (text) {
+      return `<code class="${MarkdownClassPrefix}">` + text + '</code>'
     }
 
     renderer.origin = origin
@@ -344,9 +391,11 @@ export class Compiler {
           for (let j = i; deletedHeaderLevel < toc[j].level && j < toc.length; j++) {
             toc.splice(j, 1) && j-- && i++
           }
+
           i--
         }
       }
+
       const tree = this.cacheTree[currentPath] || genTree(toc, level)
       html = treeTpl(tree, '<ul>{inner}</ul>')
       this.cacheTree[currentPath] = tree
@@ -363,6 +412,7 @@ export class Compiler {
       this.toc = []
       return
     }
+
     const currentPath = this.router.getCurrentPath()
     const {cacheTree, toc} = this
 
@@ -372,6 +422,7 @@ export class Compiler {
     for (let i = 0; i < toc.length; i++) {
       toc[i].ignoreSubHeading && toc.splice(i, 1) && i--
     }
+
     const tree = cacheTree[currentPath] || genTree(toc, level)
 
     cacheTree[currentPath] = tree
