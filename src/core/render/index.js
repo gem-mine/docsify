@@ -125,7 +125,10 @@ export function renderMixin(proto) {
   }
 
   proto._renderNav = function (text) {
-    text && this._renderTo('nav', this.compiler.compile(text))
+    if(text) {
+      const navContent = text ? this.compiler.compile(text) : ''
+      this._renderTo('.nav-content', navContent)
+    }
     if (this.config.loadNavbar) {
       getAndActive(this.router, 'nav')
     }
@@ -249,14 +252,11 @@ export function initRender(vm) {
     vm.rendered = true
   }
 
-  if (config.mergeNavbar && isMobile) {
-    navAppendToTarget = dom.find('.sidebar')
-  } else {
-    navEl.classList.add('app-nav')
+  navEl.classList.add('app-nav')
+  vm._renderTo(navEl, tpl.nav(config.name, config.logo))
 
-    if (!config.repo) {
-      navEl.classList.add('no-badge')
-    }
+  if (!config.repo) {
+    navEl.classList.add('no-badge')
   }
 
   // Add nav

@@ -158,10 +158,9 @@ function tpl(defaultValue = '') {
     </div>
     </div>`
   const el = Docsify.dom.create('div', html)
-  const aside = Docsify.dom.find('aside')
-
+  const searchContainer = Docsify.dom.find('.docsify-search-container')
   Docsify.dom.toggleClass(el, 'search')
-  Docsify.dom.before(aside, el)
+  Docsify.dom.appendTo(searchContainer, el)
 }
 
 function createSearchPanel() {

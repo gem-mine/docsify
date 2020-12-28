@@ -99,3 +99,13 @@ export function helper(className, content) {
 export function theme(color) {
   return `<style>:root{--theme-color: ${color};}</style>`
 }
+
+export function nav(title, titleImgURL) {
+  return `<div class="title">
+    <a>
+      ${ titleImgURL ? `<img src=${titleImgURL}/>` : ''}
+      <span>${title}</span>
+    </a>
+  </div>` + `<div class="docsify-search-container"></div>`
+    + `<div class="nav-content"></div>`
+}
