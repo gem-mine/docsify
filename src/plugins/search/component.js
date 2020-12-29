@@ -1,7 +1,6 @@
 import {search} from './search'
 
 let NO_DATA_TEXT = ''
-let options
 
 function style() {
   const code = `
@@ -182,8 +181,6 @@ function doSearch(value) {
   const $search = Docsify.dom.find('div.search')
   const $panel = createSearchPanel()
   const $clearBtn = Docsify.dom.find($search, '.clear-button')
-  const $sidebarNav = Docsify.dom.find('.sidebar-nav')
-  const $appName = Docsify.dom.find('.app-name')
 
   const pageToc = Docsify.dom.find('main .toc-nav')
 
@@ -193,11 +190,6 @@ function doSearch(value) {
     $panel.innerHTML = ''
     if (pageToc) {
       pageToc.classList.remove('hide')
-    }
-
-    if (options.hideOtherSidebarContent) {
-      $sidebarNav.classList.remove('hide')
-      $appName.classList.remove('hide')
     }
 
     return
@@ -220,11 +212,6 @@ function doSearch(value) {
   $panel.innerHTML = html || `<p class="empty">${NO_DATA_TEXT}</p>`
   if (pageToc) {
     pageToc.classList.add('hide')
-  }
-
-  if (options.hideOtherSidebarContent) {
-    $sidebarNav.classList.add('hide')
-    $appName.classList.add('hide')
   }
 }
 

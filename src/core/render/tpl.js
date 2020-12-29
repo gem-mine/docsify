@@ -8,9 +8,11 @@ export function corner(data) {
   if (!data) {
     return ''
   }
+
   if (!/\/\//.test(data)) {
     data = 'https://github.com/' + data
   }
+
   data = data.replace(/^git\+/, '')
 
   return (
@@ -27,7 +29,7 @@ export function corner(data) {
 /**
  * Render main content
  */
-export function main(config) {
+export function main() {
   const aside =
     '<button class="sidebar-toggle">' +
     '<div class="sidebar-toggle-button">' +
@@ -35,13 +37,6 @@ export function main(config) {
     '</div>' +
     '</button>' +
     '<aside class="sidebar">' +
-    (config.name ?
-      `<h1 class="app-name"><a class="app-name-link" data-nosearch>${
-        config.logo ?
-          `<img alt=${config.name} src=${config.logo}>` :
-          config.name
-      }</a></h1>` :
-      '') +
     '<div class="sidebar-nav"><!--sidebar--></div>' +
     '</aside>'
 
@@ -82,6 +77,7 @@ export function tree(toc, tpl = '<ul class="app-sub-sidebar">{inner}</ul>') {
   if (!toc || !toc.length) {
     return ''
   }
+
   let innerHTML = ''
   toc.forEach(node => {
     innerHTML += `<li><a class="section-link" href="${node.slug}">${node.title}</a></li>`
@@ -103,9 +99,9 @@ export function theme(color) {
 export function nav(title, titleImgURL) {
   return `<div class="title">
     <a>
-      ${ titleImgURL ? `<img src=${titleImgURL}/>` : ''}
+      ${titleImgURL ? `<img src=${titleImgURL}/>` : ''}
       <span>${title}</span>
     </a>
-  </div>` + `<div class="docsify-search-container"></div>`
-    + `<div class="nav-content"></div>`
+  </div>` + '<div class="docsify-search-container"></div>' +
+    '<div class="nav-content"></div>'
 }
