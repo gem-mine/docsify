@@ -6,7 +6,7 @@ import {callHook} from '../init/lifecycle'
 import {Compiler} from './compiler'
 import {getAndActive, sticky} from '../event/sidebar'
 import {getPath, isAbsolutePath} from '../router/util'
-import {isMobile, inBrowser} from '../util/env'
+import {inBrowser} from '../util/env'
 import {isPrimitive} from '../util/core'
 import {scrollActiveSidebar, scroll2Top} from '../event/scroll'
 import {prerenderEmbed} from './embed'
@@ -18,6 +18,7 @@ function executeScript() {
   if (!script) {
     return false
   }
+
   const code = script.innerText.trim()
   if (!code) {
     return false
@@ -102,6 +103,7 @@ export function renderMixin(proto) {
       // Reset toc
       this.compiler.subSidebar()
     }
+
     // Bind event
     this._bindEventOnRendered(activeEl)
   }
@@ -125,10 +127,11 @@ export function renderMixin(proto) {
   }
 
   proto._renderNav = function (text) {
-    if(text) {
+    if (text) {
       const navContent = text ? this.compiler.compile(text) : ''
       this._renderTo('.nav-content', navContent)
     }
+
     if (this.config.loadNavbar) {
       getAndActive(this.router, 'nav')
     }
@@ -148,6 +151,7 @@ export function renderMixin(proto) {
 
         callHook(this, 'afterEach', html, text => renderMain.call(this, text))
       }
+
       if (this.isHTML) {
         html = this.result = text
         callback()
@@ -176,6 +180,7 @@ export function renderMixin(proto) {
       dom.toggleClass(el, 'remove', 'show')
       return
     }
+
     dom.toggleClass(el, 'add', 'show')
 
     let html = this.coverIsHTML ? text : this.compiler.cover(text)
@@ -194,10 +199,12 @@ export function renderMixin(proto) {
         if (!isAbsolutePath(m[1])) {
           path = getPath(this.router.getBasePath(), m[1])
         }
+
         el.style.backgroundImage = `url(${path})`
         el.style.backgroundSize = 'cover'
         el.style.backgroundPosition = 'center center'
       }
+
       html = html.replace(m[0], '')
     }
 
@@ -231,6 +238,7 @@ export function initRender(vm) {
     if (config.repo) {
       html += tpl.corner(config.repo)
     }
+
     if (config.coverpage) {
       html += tpl.cover()
     }
@@ -238,7 +246,7 @@ export function initRender(vm) {
     if (config.logo) {
       const isBase64 = /^data:image/.test(config.logo)
       const isExternal = /(?:http[s]?:)?\/\//.test(config.logo)
-      const isRelative = /^\./.test(config.logo)
+      const isRelative = /^[./]/.test(config.logo)
 
       if (!isBase64 && !isExternal && !isRelative) {
         config.logo = getPath(vm.router.getBasePath(), config.logo)
@@ -271,6 +279,7 @@ export function initRender(vm) {
     // Polyfll
     cssVars(config.themeColor)
   }
+
   vm._updateRender()
   dom.toggleClass(dom.body, 'ready')
 }
