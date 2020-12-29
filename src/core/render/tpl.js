@@ -1,30 +1,4 @@
 import {isMobile} from '../util/env'
-/**
- * Render github corner
- * @param  {Object} data
- * @return {String}
- */
-export function corner(data) {
-  if (!data) {
-    return ''
-  }
-
-  if (!/\/\//.test(data)) {
-    data = 'https://github.com/' + data
-  }
-
-  data = data.replace(/^git\+/, '')
-
-  return (
-    `<a href="${data}" class="github-corner" aria-label="View source on Github">` +
-    '<svg viewBox="0 0 250 250" aria-hidden="true">' +
-    '<path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path>' +
-    '<path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path>' +
-    '<path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path>' +
-    '</svg>' +
-    '</a>'
-  )
-}
 
 /**
  * Render main content
@@ -96,12 +70,33 @@ export function theme(color) {
   return `<style>:root{--theme-color: ${color};}</style>`
 }
 
-export function nav(title, titleImgURL) {
+export function nav(title, titleImgURL, repo) {
+  if (!repo) {
+    return ''
+  }
+
+  if (!/\/\//.test(repo)) {
+    repo = 'https://github.com/' + repo
+  }
+
+  repo = repo.replace(/^git\+/, '')
+
+  const repoHTML =
+    '<span id="github-btn" class="github-btn">' +
+    `<a class="gh-btn" href="${repo}" target="_blank">` +
+    '<span class="gh-ico" aria-hidden="true">' +
+    '<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="12 12 40 40"><path fill="#333" d="M32 13.4c-10.5 0-19 8.5-19 19 0 8.4 5.5 15.5 13 18 1 .2 1.3-.4 1.3-.9v-3.2c-5.3 1.1-6.4-2.6-6.4-2.6-.9-2.1-2.1-2.7-2.1-2.7-1.7-1.2.1-1.1.1-1.1 1.9.1 2.9 2 2.9 2 1.7 2.9 4.5 2.1 5.5 1.6.2-1.2.7-2.1 1.2-2.6-4.2-.5-8.7-2.1-8.7-9.4 0-2.1.7-3.7 2-5.1-.2-.5-.8-2.4.2-5 0 0 1.6-.5 5.2 2 1.5-.4 3.1-.7 4.8-.7 1.6 0 3.3.2 4.7.7 3.6-2.4 5.2-2 5.2-2 1 2.6.4 4.6.2 5 1.2 1.3 2 3 2 5.1 0 7.3-4.5 8.9-8.7 9.4.7.6 1.3 1.7 1.3 3.5v5.2c0 .5.4 1.1 1.3.9 7.5-2.6 13-9.7 13-18.1 0-10.5-8.5-19-19-19z"/></svg>' +
+    '</span>' +
+    '</a>' +
+    '</span>'
+
   return `<div class="title">
-    <a>
+    <a href="#/">
       ${titleImgURL ? `<img src=${titleImgURL}/>` : ''}
       <span>${title}</span>
     </a>
-  </div>` + '<div class="docsify-search-container"></div>' +
-    '<div class="nav-content"></div>'
+  </div>` +
+  '<div class="docsify-search-container"></div>' +
+  '<div class="nav-content"></div>' +
+  repoHTML
 }

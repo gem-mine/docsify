@@ -130,6 +130,7 @@ export function renderMixin(proto) {
     if (text) {
       const navContent = text ? this.compiler.compile(text) : ''
       this._renderTo('.nav-content', navContent)
+      getAndActive(this.router, '.nav-content', true, true)
     }
 
     if (this.config.loadNavbar) {
@@ -235,10 +236,6 @@ export function initRender(vm) {
   let navAppendToTarget = dom.body
 
   if (el) {
-    if (config.repo) {
-      html += tpl.corner(config.repo)
-    }
-
     if (config.coverpage) {
       html += tpl.cover()
     }
@@ -261,7 +258,7 @@ export function initRender(vm) {
   }
 
   navEl.classList.add('app-nav')
-  vm._renderTo(navEl, tpl.nav(config.name, config.logo))
+  vm._renderTo(navEl, tpl.nav(config.name, config.logo, config.repo))
 
   if (!config.repo) {
     navEl.classList.add('no-badge')
@@ -269,7 +266,7 @@ export function initRender(vm) {
 
   // Add nav
   if (config.loadNavbar) {
-    dom.before(navAppendToTarget, navEl)
+    dom.before(navAppendToTarget, navEl, 1)
   }
 
   if (config.themeColor) {
