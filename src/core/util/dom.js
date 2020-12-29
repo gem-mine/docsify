@@ -14,6 +14,7 @@ export function getNode(el, noCache = false) {
     if (typeof window.Vue !== 'undefined') {
       return find(el)
     }
+
     el = noCache ? find(el) : cacheNode[el] || (cacheNode[el] = find(el))
   }
 
@@ -53,6 +54,7 @@ export function create(node, tpl) {
   if (tpl) {
     node.innerHTML = tpl
   }
+
   return node
 }
 
@@ -60,8 +62,8 @@ export function appendTo(target, el) {
   return target.appendChild(el)
 }
 
-export function before(target, el) {
-  return target.insertBefore(el, target.children[0])
+export function before(target, el, index) {
+  return target.insertBefore(el, index ? target.children[index] : target.children[0])
 }
 
 export function on(el, type, handler) {
