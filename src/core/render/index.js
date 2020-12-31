@@ -179,6 +179,8 @@ export function renderMixin(proto) {
     dom.toggleClass(dom.getNode('main'), coverOnly ? 'add' : 'remove', 'hidden')
     if (!text) {
       dom.toggleClass(el, 'remove', 'show')
+      const body = dom.getNode('body')
+      dom.toggleClass(body, 'add', 'sticky')
       return
     }
 
