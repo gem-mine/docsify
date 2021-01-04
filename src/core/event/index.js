@@ -19,7 +19,7 @@ export function initEvent(vm) {
   sidebar.collapse('.sidebar', vm.router)
   // Bind sticky effect
   if (vm.config.coverpage) {
-    !isMobile && on('scroll', sidebar.sticky)
+    on('scroll', sidebar.sticky)
   } else {
     body.classList.add('sticky')
   }

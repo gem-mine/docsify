@@ -95,8 +95,13 @@ export function nav(title, titleImgURL, repo) {
       ${titleImgURL ? `<img src=${titleImgURL}/>` : ''}
       <span>${title}</span>
     </a>
+    ${isMobile ? '<div class="show-nav-content">' +
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="64 64 896 896" focusable="false" data-icon="unordered-list" width="1em" height="1em" fill="currentColor" aria-hidden="true"><path d="M912 192H328c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h584c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 284H328c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h584c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 284H328c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h584c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM104 228a56 56 0 10112 0 56 56 0 10-112 0zm0 284a56 56 0 10112 0 56 56 0 10-112 0zm0 284a56 56 0 10112 0 56 56 0 10-112 0z"></path></svg>' +
+    '</div>' : ''}
   </div>` +
+  (isMobile ? '<div class="nav-menu">' : '') +
   '<div class="docsify-search-container"></div>' +
   '<div class="nav-content"></div>' +
-  repoHTML
+  repoHTML +
+  (isMobile ? '</div>' : '')
 }
