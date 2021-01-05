@@ -178,6 +178,7 @@ function createSearchPanel() {
 }
 
 function doSearch(value) {
+  const $body = Docsify.dom.find('body')
   const $search = Docsify.dom.find('div.search')
   const $panel = createSearchPanel()
   const $clearBtn = Docsify.dom.find($search, '.clear-button')
@@ -185,6 +186,7 @@ function doSearch(value) {
   const pageToc = Docsify.dom.find('main .toc-nav')
 
   if (!value) {
+    $body.classList.remove('search-result-show')
     $panel.classList.remove('show')
     $clearBtn.classList.remove('show')
     $panel.innerHTML = ''
@@ -207,6 +209,7 @@ function doSearch(value) {
 </div>`
   })
 
+  $body.classList.add('search-result-show')
   $panel.classList.add('show')
   $clearBtn.classList.add('show')
   $panel.innerHTML = html || `<p class="empty">${NO_DATA_TEXT}</p>`
