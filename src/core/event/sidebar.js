@@ -1,7 +1,9 @@
 import {isMobile} from '../util/env'
 import * as dom from '../util/dom'
 
-const title = dom.$.title
+const title = dom.$.title ||
+  window.$docsify.title ||
+  window.$docsify.name
 /**
  * Toggle button
  */
@@ -12,6 +14,7 @@ export function btn(el) {
   if (el == null) {
     return
   }
+
   dom.on(el, 'click', e => {
     e.stopPropagation()
     toggle()
@@ -30,6 +33,7 @@ export function collapse(el) {
   if (el == null) {
     return
   }
+
   dom.on(el, 'click', ({target}) => {
     if (
       target.nodeName === 'A' &&
@@ -46,6 +50,7 @@ export function sticky() {
   if (!cover) {
     return
   }
+
   const coverHeight = cover.getBoundingClientRect().height
 
   if (window.pageYOffset >= coverHeight || cover.classList.contains('hidden')) {
@@ -69,6 +74,7 @@ export function getAndActive(router, el, isParent, autoTitle) {
   if (el != null) {
     links = dom.findAll(el, 'a')
   }
+
   const hash = decodeURI(router.toURL(router.getCurrentPath()))
   let target
 
