@@ -92,7 +92,7 @@ export function nav(title, titleImgURL, repo) {
 
   return `<div class="title">
     <a href="#/">
-      ${titleImgURL ? `<img src=${titleImgURL}/>` : ''}
+      ${titleImgURL ? `<img src="${titleImgURL}">` : ''}
       <span>${title}</span>
     </a>
     ${isMobile ? '<div class="show-nav-content">' +
