@@ -6,7 +6,7 @@ function install(hook) {
   let zoom
 
   hook.doneEach(_ => {
-    let elms = Array.apply(null, document.querySelectorAll('.markdown-section img:not(.emoji):not([data-no-zoom])'))
+    let elms = Array.apply(null, document.querySelectorAll('.markdown-section img.docsify-markdown-element:not(.emoji):not([data-no-zoom])'))
 
     elms = elms.filter(elm => matchesSelector.call(elm, 'a img') === false)
 
