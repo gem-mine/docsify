@@ -77,10 +77,11 @@ export class History {
         (idIndex > 0 ? currentRoute.substring(0, idIndex) : currentRoute) + path
     }
 
-    if (this.config.relativePath && path.indexOf('/') !== 0) {
+    if (path !== '' && this.config.relativePath && path.indexOf('/') !== 0) {
       const currentDir = currentRoute.substring(0, currentRoute.lastIndexOf('/') + 1)
       return cleanPath(resolvePath(currentDir + path))
     }
+
     return cleanPath('/' + path)
   }
 }
