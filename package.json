@@ -45,6 +45,7 @@
     "marked": "^0.7.0",
     "medium-zoom": "^1.0.4",
     "prismjs": "^1.15.0",
+    "strip-indent": "^3.0.0",
     "tinydate": "^1.0.0",
     "tweezer.js": "^1.4.0"
   },

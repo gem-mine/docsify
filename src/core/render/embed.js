@@ -1,3 +1,4 @@
+import stripIndent from 'strip-indent'
 import {get} from '../fetch/ajax'
 import {merge} from '../util/core'
 
@@ -18,13 +19,41 @@ function walkFetchEmbed({embedTokens, compile, fetch}, cb) {
         let embedToken
         if (text) {
           if (token.embed.type === 'markdown') {
+            let path = token.embed.url.split('/')
+            path.pop()
+            path = path.join('/')
+            // Resolves relative links to absolute
+            text = text.replace(/\[([^[\]]+)\]\(([^)]+)\)/g, x => {
+              const linkBeginIndex = x.indexOf('(')
+              if (x.substring(linkBeginIndex).startsWith('(.')) {
+                return (
+                  x.substring(0, linkBeginIndex) +
+                  `(${window.location.protocol}//${window.location.host}${path}/` +
+                  x.substring(linkBeginIndex + 1, x.length - 1) +
+                  ')'
+                )
+              }
+
+              return x
+            })
+
+            // This may contain YAML front matter and will need to be stripped.
+            const frontMatterInstalled =
+              ($docsify.frontMatter || {}).installed || false
+            if (frontMatterInstalled === true) {
+              text = $docsify.frontMatter.parseMarkdown(text)
+            }
+
             embedToken = compile.lexer(text)
           } else if (token.embed.type === 'code') {
             if (token.embed.fragment) {
               const fragment = token.embed.fragment
-              const pattern = new RegExp(`(?:###|\\/\\/\\/)\\s*\\[${fragment}\\]([\\s\\S]*)(?:###|\\/\\/\\/)\\s*\\[${fragment}\\]`)
-              text = ((text.match(pattern) || [])[1] || '').trim()
+              const pattern = new RegExp(
+                `(?:###|\\/\\/\\/)\\s*\\[${fragment}\\]([\\s\\S]*)(?:###|\\/\\/\\/)\\s*\\[${fragment}\\]`
+              )
+              text = stripIndent((text.match(pattern) || [])[1] || '').trim()
             }
+
             embedToken = compile.lexer(
               '```' +
                 token.embed.lang +
@@ -42,6 +71,7 @@ function walkFetchEmbed({embedTokens, compile, fetch}, cb) {
             embedToken.links = {}
           }
         }
+
         cb({token, embedToken})
         if (++count >= step) {
           cb({})
@@ -95,17 +125,27 @@ export function prerenderEmbed({compiler, raw = '', fetch}, done) {
     }
   })
 
-  let moveIndex = 0
+  // Keep track of which tokens have been embedded so far
+  // so that we know where to insert the embedded tokens as they
+  // are returned
+  const moves = []
   walkFetchEmbed({compile, embedTokens, fetch}, ({embedToken, token}) => {
     if (token) {
-      const index = token.index + moveIndex
+      // Iterate through the array of previously inserted tokens
+      // to determine where the current embedded tokens should be inserted
+      let index = token.index
+      moves.forEach(pos => {
+        if (index > pos.start) {
+          index += pos.length
+        }
+      })
 
       merge(links, embedToken.links)
 
       tokens = tokens
         .slice(0, index)
         .concat(embedToken, tokens.slice(index + 1))
-      moveIndex += embedToken.length - 1
+      moves.push({start: index, length: embedToken.length - 1})
     } else {
       cached[raw] = tokens.concat()
       tokens.links = cached[raw].links = links
