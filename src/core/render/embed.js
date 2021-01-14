@@ -19,19 +19,24 @@ function walkFetchEmbed({embedTokens, compile, fetch}, cb) {
         let embedToken
         if (text) {
           if (token.embed.type === 'markdown') {
-            let path = token.embed.url.split('/')
-            path.pop()
-            path = path.join('/')
-            // Resolves relative links to absolute
+            const isDot = s => s !== '.'
+            const path = token.embed.url
+              .replace($docsify.basePath, '')
+              .split('/')
+              .filter(isDot)
             text = text.replace(/\[([^[\]]+)\]\(([^)]+)\)/g, x => {
               const linkBeginIndex = x.indexOf('(')
               if (x.substring(linkBeginIndex).startsWith('(.')) {
-                return (
-                  x.substring(0, linkBeginIndex) +
-                  `(${window.location.protocol}//${window.location.host}${path}/` +
-                  x.substring(linkBeginIndex + 1, x.length - 1) +
-                  ')'
-                )
+                const arr = x
+                  .substring(linkBeginIndex + 1, x.length - 1)
+                  .split('/')
+                  .filter(isDot)
+                let n = 0
+                arr.every(p => (p === '..' ? (n += 1) : false))
+                return `${x.substring(0, linkBeginIndex)}(${path
+                  .slice(0, path.length - n - 1)
+                  .concat(arr.slice(n))
+                  .join('/')})`
               }
 
               return x
