@@ -24,7 +24,9 @@ export class HTML5History extends History {
     on('click', e => {
       const el = e.target.tagName === 'A' ? e.target : e.target.parentNode
 
-      if (el.tagName === 'A' && !/_blank/.test(el.target)) {
+      if (el.tagName === 'A' &&
+        el.classList.contains('docsify-markdown-element') &&
+        !/_blank/.test(el.target)) {
         e.preventDefault()
         const url = el.href
         window.history.pushState({key: url}, '', url)
